@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -110,5 +111,37 @@ class Product extends Model {
      */
     public function setPrice(float $price): void {
         $this->price = $price;
+    }
+
+    /**
+     * Deletes the product instance
+     * @return bool|null
+     * @throws Exception
+     */
+    public function delete() {
+        if (strlen($this->getPhoto()) > 0)
+            $this->delete_files(public_path($this->getPhoto()));
+
+        return parent::delete();
+    }
+
+    /**
+     * Deletes a folder, the image folder in this case.
+     * @param $target string Target folder
+     *
+     * @url https://paulund.co.uk/php-delete-directory-and-files-in-directory
+     */
+    private function delete_files(string $target): void {
+        if(is_dir($target)){
+            $files = glob( $target . '*', GLOB_MARK ); //GLOB_MARK adds a slash to directories returned
+
+            foreach( $files as $file ){
+                self::delete_files($file);
+            }
+
+            rmdir($target);
+        } elseif(is_file($target)) {
+            unlink($target);
+        }
     }
 }
