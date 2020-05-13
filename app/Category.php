@@ -28,9 +28,9 @@ class Category extends Model {
     }
 
     /**
-     * @param string $name New name
+     * @param string|null $name New name
      */
-    public function setName(string $name): void {
+    public function setName($name): void {
         $this->name = $name;
     }
 
@@ -42,16 +42,16 @@ class Category extends Model {
     }
 
     /**
-     * @param string $label New label
+     * @param string|null $label New label
      */
-    public function setLabel(string $label): void {
+    public function setLabel($label): void {
         $this->label = $label;
     }
 
     /**
      * Returns a list of all products where
      * the category matches to this class.
-     * @code {Product#getCategory() === $this}
+     * @code {Product#getCategory()->getId() === $this->getId()}
      *
      * @return array Child products
      */
@@ -59,7 +59,7 @@ class Category extends Model {
         $result = [];
 
         foreach(Product::all() as $product) {
-            if ($product->getCategory() === $this) {
+            if ($product->getCategory()->getId() === $this->getId()) {
                 array_push($result, $product);
             }
         }

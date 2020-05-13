@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Category;
 use App\Http\Controllers\Controller;
 
 class AdminController extends Controller {
@@ -16,5 +17,9 @@ class AdminController extends Controller {
 
     public function index() {
         return view("admin.index");
+    }
+
+    public function debug() {
+        return Category::find(1)->getProducts();
     }
 }

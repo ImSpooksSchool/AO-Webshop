@@ -21,6 +21,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 // Admin panel
 Route::get('/admin', 'Admin\AdminController@index');
+Route::get('/admin/debug', 'Admin\AdminController@debug');
 
 // Categories
 // Add
@@ -30,7 +31,7 @@ Route::post('/admin/category/add', ["before" => "csrf", "uses" => 'Admin\AdminCa
 Route::get('/admin/category/edit/{category}', 'Admin\AdminCategoryController@edit')->name("category-edit");
 Route::post('/admin/category/edit/{category}', ["before" => "csrf", "uses" => 'Admin\AdminCategoryController@update'])->name("category-update");
 // Delete
-Route::post('/admin/category/delete/{category}', ["before" => "csrf", "uses" => 'Admin\AdminCategoryController@destroy'])->name("category-destroy");
+Route::get('/admin/category/delete/{category}', ["before" => "csrf", "uses" => 'Admin\AdminCategoryController@destroy'])->name("category-destroy");
 
 
 // Products
@@ -41,4 +42,4 @@ Route::post('/admin/products/add/{category}', ["before" => "csrf", "uses" => 'Ad
 Route::get('/admin/products/edit/{product}', 'Admin\AdminProductController@edit')->name("product-edit");
 Route::post('/admin/products/edit/{product}', ["before" => "csrf", "uses" => 'Admin\AdminProductController@update'])->name("product-update");
 // Delete
-Route::post('/admin/products/delete/{product}', ["before" => "csrf", "uses" => 'Admin\AdminProductController@destroy'])->name("product-destroy");
+Route::get('/admin/products/delete/{product}', ["before" => "csrf", "uses" => 'Admin\AdminProductController@destroy'])->name("product-destroy");

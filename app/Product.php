@@ -18,9 +18,9 @@ class Product extends Model {
     protected $guarded = [];
 
     /**
-     * @return int Product unique id
+     * @return int|null Product unique id
      */
-    public function getId(): int {
+    public function getId() {
         return $this->id;
     }
 
@@ -64,9 +64,9 @@ class Product extends Model {
     }
 
     /**
-     * @param string $label New label
+     * @param string|null $label New label
      */
-    public function setLabel(string $label): void {
+    public function setLabel($label): void {
         $this->label = $label;
     }
 
@@ -74,13 +74,13 @@ class Product extends Model {
      * @return string Product description
      */
     public function getDescription(): string {
-        return $this->description;
+        return $this->description != null ? $this->description : "";
     }
 
     /**
-     * @param string $description New description
+     * @param string|null $description New description
      */
-    public function setDescription(string $description): void {
+    public function setDescription($description): void {
         $this->description = $description;
     }
 
@@ -88,7 +88,7 @@ class Product extends Model {
      * @return string Product photo URL
      */
     public function getPhoto(): string {
-        return $this->photo;
+        return $this->photo != null ? $this->photo : "";
     }
 
     /**
@@ -102,7 +102,7 @@ class Product extends Model {
      * @return float Product price
      */
     public function getPrice(): float {
-        return $this->price;
+        return $this->price != null ? $this->price : 1;
     }
 
     /**

@@ -46,6 +46,9 @@ class AdminCategoryController extends Controller {
     }
 
     public function destroy(Category $category) {
+        foreach ($category->getProducts() as $product) {
+            $product->delete();
+        }
         $category->delete();
 
         return redirect("/admin");
