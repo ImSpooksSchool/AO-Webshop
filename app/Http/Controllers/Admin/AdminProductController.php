@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Category;
 use App\Http\Controllers\Controller;
-use App\Utils\Placeholder;
 use App\Product;
+use App\Utils\Placeholder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
 class AdminProductController extends Controller {
@@ -18,7 +17,9 @@ class AdminProductController extends Controller {
      */
     public function __construct() {
         $this->middleware('auth');
+        $this->middleware('isadmin');
     }
+
 
     public function create(Category $category) {
         return view("admin.product.add", ["category" => $category]);
@@ -38,13 +39,7 @@ class AdminProductController extends Controller {
         $product->setPhoto($path);
         $product->save();
 
-        $image = Image::make($request->get("photo"))->encode("png", 100);
-
-        if (!file_exists($path))
-            mkdir(public_path($path), 0777, true);
-
-        $image->save(public_path(Placeholder::replace($path . "{name}.png", ["name" => "x512"])));
-        $image->resize(64, 64)->save(public_path(Placeholder::replace($path . "{name}.png", ["name" => "x64"])));
+        $this->storePhoto($path, $request->get("photo"));
 
         return redirect("/admin");
     }
@@ -67,20 +62,27 @@ class AdminProductController extends Controller {
         if ($request->get("photo") != null) {
             $path = $product->getPhoto();
 
-            $image = Image::make($request->get("photo"))->encode("png", 100);
-
-            if (!file_exists($path))
-                mkdir(public_path($path), 0777, true);
-
-            $image->save(public_path(Placeholder::replace($path . "{name}.png", ["name" => "x512"])));
-            $image->resize(64, 64)->save(public_path(Placeholder::replace($path . "{name}.png", ["name" => "x64"])));
+            $this->storePhoto($path, $request->get("photo"));
         }
 
         return redirect("/admin");
     }
 
     public function destroy(Product $product) {
-        $product->delete();
+        try {
+            $product->delete();
+        } catch (\Exception $e) {
+        }
         return redirect("/admin");
+    }
+
+    private function storePhoto(string $path, string $photo): void {
+        $image = Image::make($photo)->encode("png", 100);
+
+        if (!file_exists($path))
+            mkdir(public_path($path), 0777, true);
+
+        $image->save(public_path(Placeholder::replace($path . "{name}.png", ["name" => "x512"])));
+        $image->resize(64, 64)->save(public_path(Placeholder::replace($path . "{name}.png", ["name" => "x64"])));
     }
 }

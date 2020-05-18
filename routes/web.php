@@ -16,8 +16,15 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
+// Users
+
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get("/category/{category}", "User\UserController@showCategory");
+Route::get("/product/{product}", "User\UserController@showProduct");
+
+Route::post('/addToCart/{product}', ["before" => "csrf", "uses" => 'User\UserController@addToCart'])->name("add-to-cart");
 
 // Admin panel
 Route::get('/admin', 'Admin\AdminController@index');
