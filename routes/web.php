@@ -26,12 +26,16 @@ Route::get("/category/{category}", "User\UserController@showCategory")->name("sh
 Route::get("/product/{product}", "User\UserController@showProduct")->name("show-product");
 Route::get("/cart", "User\UserController@showCart")->name("show-cart");
 
-Route::get("/addToCart/{product}", "User\UserController@addToCart")->name("add-to-cart");
-
+Route::get("/addToCart/{product}", "User\UserCartController@addToCart")->name("add-to-cart");
 Route::post("/cart/set", ["before" => "csrf", "uses" => "User\UserCartController@set"])->name("cart-set");
 
+Route::get("/order", "User\UserController@order")->name("cart-order");
+Route::post("/order", ["before" => "csrf", "uses" => "User\UserController@storeOrder"])->name("cart-order-final");
+Route::get("/ordersuccess", "User\UserController@orderSuccess");
+
 // Admin panel
-Route::get("/admin", "Admin\AdminController@index");
+Route::get("/admin", "Admin\AdminController@index")->name("admin-panel");
+Route::get("/handleorder/{order}", "Admin\AdminController@handleOrder")->name("handle-order");
 Route::get("/admin/debug", "Admin\AdminController@debug");
 
 // Categories

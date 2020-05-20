@@ -15,6 +15,13 @@ use Illuminate\Http\Request;
 
 class UserCartController extends Controller {
 
+    public function addToCart(Product $product) {
+        $cart = ShoppingCart::getInstance();
+        $cart->addProduct($product);
+
+        return redirect("/cart");
+    }
+
     public function set(Request $request) {
         if (!$request->has("id") || !$request->has("newVal"))
             return ["response" => false,

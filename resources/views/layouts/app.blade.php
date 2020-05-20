@@ -19,6 +19,7 @@
     <!-- Styles -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
     <link href="{{ asset('css/loading_bar.css') }}" rel="stylesheet">
 
     @yield("head")
@@ -84,7 +85,45 @@
         </nav>
 
         <main class="py-4">
-            @yield('content')
+            <div class="wrapper">
+
+                <!-- Sidebar -->
+                <nav id="sidebar">
+                    <div class="sidebar-header">
+                        <h3>Sidebar</h3>
+                    </div>
+
+                    <ul class="list-unstyled components">
+                        @if(Auth::check())
+                            @if (Auth::user()->hasRole("admin"))
+                                <li><a href="{{route("admin-panel")}}">Admin Panel</a></li>
+                            @endif
+                        @endif
+
+                        @if(Auth::check())
+                            @if (Auth::user()->hasRole("user"))
+                                <li><a href="{{route("show-cart")}}">Cart</a></li>
+                            @endif
+                        @endif
+
+                        <li class="active">
+                            <a href="#categoriesSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Categories</a>
+                            <ul class="collapse list-unstyled" id="categoriesSubmenu">
+                                @foreach(\App\Category::all() as $category)
+                                    <li>
+                                        <a href="{{route("show-category", $category)}}">{{$category->getLabel()}}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Page Content -->
+            <div id="content">
+                @yield('content')
+            </div>
         </main>
     </div>
     @stack("js")

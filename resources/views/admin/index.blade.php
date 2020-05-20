@@ -3,13 +3,13 @@
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">Categories</div>
 
                     <div class="card-body">
                         @foreach(\App\Category::all() as $category)
-                            <div class="card">
+                            <div class="card" style="margin-bottom: 10px">
                                 <h5 class=" card-header">{{$category->getLabel()}}</h5>
                                 <div class="card-body">
                                     <div class="row">
@@ -112,10 +112,55 @@
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">Orders</div>
+            <div class="col-md-12">
+                <div class="card" style="margin-top: 10px">
+                    <div class="card-header">Orders</div>
+                    <div class="card-body">
+                        @foreach(\App\Order::all() as $order)
+                            <div class="card">
+                                <details class="card-body">
+                                    <summary class="card-header">
+                                        @if($order->isHandled())
+                                            <i style="color: dimgray">
+                                        @endif
+                                        Order {{$order->getId()}}
+                                        @if($order->isHandled())
+                                            </i>
+                                        @endif
+                                    </summary>
 
-                <div class="card-body">
+                                    <p class="card-text">
+                                        Handled:
+                                        @if($order->isHandled())
+                                            Yes
+                                        @else
+                                            No
+                                        @endif<br>
+
+                                        Name: {{$order->getFullname()}}<br>
+                                        Country: {{$order->getCountry()}}<br>
+                                        State: {{$order->getState()}}<br>
+                                        City: {{$order->getCity()}}<br>
+                                        Street: {{$order->getStreet()}}<br>
+                                        Zip: {{$order->getZip()}}<br>
+                                        Phone: {{$order->getPhone()}}<br>
+                                        <br>
+                                        Products:
+                                    </p>
+                                    <ul>
+                                        @foreach($order->getProducts() as $product => $amount)
+                                            @php($product = \App\Product::find($product))
+                                            <li>{{$product->getLabel()}}: {{$amount}}</li>
+                                        @endforeach
+                                    </ul>
+
+                                    <a style="margin-top: 18px" class="btn btn-primary"
+                                       href="{{route("handle-order", $order)}}">Toggle handled status</a>
+                                </details>
+
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>

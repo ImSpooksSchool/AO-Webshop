@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Category;
 use App\Http\Controllers\Controller;
+use App\Order;
 
 class AdminController extends Controller {
     /**
@@ -18,6 +19,12 @@ class AdminController extends Controller {
 
     public function index() {
         return view("admin.index");
+    }
+
+    public function handleOrder(Order $order) {
+        $order->setHandled(!$order->isHandled());
+        $order->save();
+        return redirect("/admin");
     }
 
     public function debug() {

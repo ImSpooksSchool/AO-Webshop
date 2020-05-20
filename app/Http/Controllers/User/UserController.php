@@ -12,6 +12,8 @@ use App\Category;
 use App\Http\Controllers\Controller;
 use App\Product;
 use App\ShoppingCart;
+use App\Utils\SpooksUtils;
+use Illuminate\Http\Request;
 
 class UserController extends Controller {
 
@@ -31,10 +33,42 @@ class UserController extends Controller {
         return view("user.cart");
     }
 
-    public function addToCart(Product $product) {
-        $cart = ShoppingCart::getInstance();
-        $cart->addProduct($product);
+    public function order() {
+        return view("user.order", ["cart" => ShoppingCart::getInstance()]);
+    }
 
-        return redirect("/cart");
+    public function orderSuccess() {
+        return view("user.ordersuccess");
+    }
+
+    public function storeOrder(Request $request) {
+        $required = ["firstname", "lastname", "country", "state", "street", "streetnr", "zip", "city"];
+
+        foreach ($required as $require) {
+            if (!$request->has($require)) {
+                return redirect("/order");
+            }
+        }
+
+
+        $get = function(Request $request, string $key, $defaultValue = "") {
+            return SpooksUtils::getOrDefault($request->get($key), $defaultValue);
+        };
+
+        $cart = ShoppingCart::getInstance();
+
+        $order = $cart->toOrder();
+        $order->setFullname($get($request, "firstname") . " " . $get($request, "lastname"));
+        $order->setCountry($get($request, "country"));
+        $order->setState($get($request, "state"));
+        $order->setStreet($get($request, "street") . " " . $get($request, "streetnr"));
+        $order->setZip($get($request, "zip"));
+        $order->setCity($get($request, "city"));
+        $order->setPhone($get($request, "phone"));
+        $order->save();
+
+        $cart->clear();
+
+        return redirect("/ordersuccess");
     }
 }

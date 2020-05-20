@@ -16,12 +16,13 @@
                             </tr>
                         </thead>
                         <tbody>
+                        @php($total = 0)
                             @foreach(\App\ShoppingCart::getInstance()->getProducts() as $product => $amount)
                                 {{-- Convert product ID to product object--}}
                                 @php($product = \App\Product::find($product))
                                 @php($data_field = "product_". $product->getId())
 
-                                <tr id="{{$data_field}}">
+                                <tr id="{{$data_field}}" class="product">
                                     <td><img src="{{asset("uploads/products/" . $product->getId() . "/x64.png")}}" alt="{{$product->getName()}}"></td>
                                     <td>{{$product->getLabel()}}</td>
 {{--                                    <td><input class="form-control" type="text" value="{{$amount}}" /></td>--}}
@@ -34,10 +35,18 @@
                                         </div>
                                     </td>
 
+                                    @php($total += $product->getPrice() * $amount)
                                     <td id="{{$data_field}}_price" price="{{$product->getPrice()}}">${{$product->getPrice() * $amount}}</td>
                                     <td class="text-center"><button class="btn btn-sm btn-danger btn-number" data-type="delete" data-field="{{$data_field}}"><i class="fa fa-trash"></i></button></td>
                                 </tr>
                             @endforeach
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><h5>Total</h5></td>
+                                <td class="text-right" id="total-price"><h5><strong>${{$total}}</strong></h5></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -70,6 +79,21 @@
                                 var price = document.getElementById(parent.id + "_price");
                                 var pricePer = parseFloat($(price).attr("price"));
                                 price.innerText = "$" + (newValue * pricePer).toFixed(2);
+
+                                var total = document.getElementById("total-price").children[0].children[0];
+                                var totalPrice = 0;
+
+                                for (let element of document.getElementsByClassName("product")) {
+                                    console.log(element);
+
+                                    price = document.getElementById(element.id + "_price");
+                                    pricePer = parseFloat($(price).attr("price"));
+                                    var quantity = parseInt(document.getElementById(element.id + "_input").value);
+
+                                    totalPrice += pricePer * quantity;
+                                }
+
+                                total.innerText = "$" + totalPrice.toFixed(2);
                             }
                         }
                     })

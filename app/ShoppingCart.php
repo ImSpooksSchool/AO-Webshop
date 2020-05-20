@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -60,7 +61,7 @@ class ShoppingCart {
 
     public function clear() {
         $this->products = [];
-        $this->saveSession();
+        Session::remove("cart");
     }
 
     public function getProducts(): array {
@@ -69,6 +70,10 @@ class ShoppingCart {
 
     public function saveSession(): void {
         Session::put("cart", $this->serialize());
+    }
+
+    public function toOrder(): Order {
+        return Order::createFromCart($this, Auth::user());
     }
 
     private function serialize(): array {

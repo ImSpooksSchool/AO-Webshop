@@ -17,7 +17,14 @@ class CreateOrdersTable extends Migration
             $table->id();
 
             $table->unsignedBigInteger("user_id");
-            $table->json("products")->default([]);
+            $table->string("fullname");
+            $table->string("country");
+            $table->string("state");
+            $table->string("city");
+            $table->string("street");
+            $table->string("zip");
+            $table->string("phone");
+            $table->json("products")->default("[]");
             $table->boolean("handled")->default(false);
 
             $table->timestamps();
