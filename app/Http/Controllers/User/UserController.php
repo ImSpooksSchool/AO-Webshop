@@ -9,12 +9,15 @@ namespace App\Http\Controllers\User;
 
 
 use App\Category;
+use App\Http\Controllers\Controller;
 use App\Product;
 use App\ShoppingCart;
-use App\Utils\SpooksUtils;
-use Illuminate\Http\Request;
 
-class UserController {
+class UserController extends Controller {
+
+    public function __construct() {
+        $this->middleware("auth");
+    }
 
     public function showCategory(Category $category) {
         return view("user.category", ["category" => $category]);
@@ -24,9 +27,13 @@ class UserController {
         return view("user.product", ["product" => $product]);
     }
 
-    public function addToCart(Request $request, Product $product) {
-        $cart = ShoppingCart::getInstance($request);
-        $cart->addProduct($product, SpooksUtils::getOrDefault($request->get("amount"), 1));
+    public function showCart() {
+        return view("user.cart");
+    }
+
+    public function addToCart(Product $product) {
+        $cart = ShoppingCart::getInstance();
+        $cart->addProduct($product);
 
         return redirect("/cart");
     }

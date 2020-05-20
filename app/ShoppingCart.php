@@ -2,23 +2,26 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
-class ShoppingCart extends Model {
+/**
+ * @property array $products
+ * @package App
+ */
+class ShoppingCart {
 
-    protected $guarded = [];
-
-    public static function getInstance(Request $request): ShoppingCart {
-        $cart = $request->session()->get("cart");
+    public static function getInstance(): ShoppingCart {
+        $cart = Session::get("cart");
         if (!isset($cart))
-            $request->session()->put("cart", $cart = new ShoppingCart());
+            Session::put("cart", ($cart = new ShoppingCart())->serialize());
+        else
+            $cart = self::deserialize($cart);
         return $cart;
     }
 
     private array $products = [];
 
-    public function addProduct(Product $product, int $amount = 1): void {
+    public function addProduct(Product $product, int $add = 1): void {
         if ($product == null)
             return;
 
@@ -26,16 +29,55 @@ class ShoppingCart extends Model {
         if (array_key_exists($product->getId(), $this->products)) {
             $amount = $this->products[$product->getId()];
         }
-        $this->products[$product->getId()] = ($amount + $amount);
+        $this->products[$product->getId()] = ($amount + $add);
+
+        $this->saveSession();
     }
 
-    public function removeProduct(Product $product): void {
+    public function removeProduct(Product $product, int $remove = 1): void {
+        if ($product == null)
+            return;
+
+        $amount = 0;
+        if (array_key_exists($product->getId(), $this->products)) {
+            $amount = $this->products[$product->getId()];
+        }
+        if ($amount - $remove > 0)
+            $this->products[$product->getId()] = ($amount - $remove);
+        else
+            unset($this->products[$product->getId()]);
+
+        $this->saveSession();
+    }
+
+    public function deleteProduct(Product $product): void {
         if ($product == null)
             return;
         unset($this->products[$product->getId()]);
+
+        $this->saveSession();
+    }
+
+    public function clear() {
+        $this->products = [];
+        $this->saveSession();
     }
 
     public function getProducts(): array {
         return $this->products;
+    }
+
+    public function saveSession(): void {
+        Session::put("cart", $this->serialize());
+    }
+
+    private function serialize(): array {
+        return $this->products;
+    }
+
+    private static function deserialize(array $input): ShoppingCart {
+        $cart = new ShoppingCart();
+        $cart->products = $input;
+        return $cart;
     }
 }

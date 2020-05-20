@@ -17,11 +17,20 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/loading_bar.css') }}" rel="stylesheet">
 
     @yield("head")
 </head>
 <body>
+
+    {{-- Loading bar --}}
+    <div class="overlay"></div>
+    <div class="spanner">
+        <div class="loader"></div>
+    </div>
+
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
