@@ -14,11 +14,12 @@ use App\Product;
 use App\ShoppingCart;
 use App\Utils\SpooksUtils;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller {
 
     public function __construct() {
-        $this->middleware("auth");
+//        $this->middleware("auth");
     }
 
     public function showCategory(Category $category) {
@@ -34,11 +35,21 @@ class UserController extends Controller {
     }
 
     public function order() {
+        if (!Auth::check()) {
+            return redirect("/login?redirect=/order");
+        }
         return view("user.order", ["cart" => ShoppingCart::getInstance()]);
     }
 
     public function orderSuccess() {
         return view("user.ordersuccess");
+    }
+
+    public function orderList() {
+        if (!Auth::check()) {
+            return redirect("/login?redirect=/orderlist");
+        }
+        return view("user.orderlist");
     }
 
     public function storeOrder(Request $request) {

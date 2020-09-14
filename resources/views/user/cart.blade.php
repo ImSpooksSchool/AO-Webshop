@@ -41,7 +41,7 @@
                                 </tr>
                             @endforeach
                             <tr>
-                                <td></td>
+                                <td><a class="btn btn-primary" href="{{route("cart-order")}}">Order</a></td>
                                 <td></td>
                                 <td></td>
                                 <td><h5>Total</h5></td>

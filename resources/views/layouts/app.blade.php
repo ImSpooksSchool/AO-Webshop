@@ -100,11 +100,8 @@
                             @endif
                         @endif
 
-                        @if(Auth::check())
-                            @if (Auth::user()->hasRole("user"))
-                                <li><a href="{{route("show-cart")}}">Cart</a></li>
-                            @endif
-                        @endif
+                        <li><a href="{{route("show-cart")}}">Cart</a></li>
+                        <li><a href="{{route("cart-orderlist")}}">Order lijst</a></li>
 
                         <li class="active">
                             <a href="#categoriesSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Categories</a>

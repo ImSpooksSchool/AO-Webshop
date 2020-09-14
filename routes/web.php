@@ -32,6 +32,7 @@ Route::post("/cart/set", ["before" => "csrf", "uses" => "User\UserCartController
 Route::get("/order", "User\UserController@order")->name("cart-order");
 Route::post("/order", ["before" => "csrf", "uses" => "User\UserController@storeOrder"])->name("cart-order-final");
 Route::get("/ordersuccess", "User\UserController@orderSuccess");
+Route::get("/orderlist", "User\UserController@orderList")->name("cart-orderlist");
 
 // Admin panel
 Route::get("/admin", "Admin\AdminController@index")->name("admin-panel");

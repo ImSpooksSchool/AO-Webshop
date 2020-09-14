@@ -11,6 +11,12 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
+                        @php
+                            if(!array_key_exists("redirect", $_GET))
+                                $_GET["redirect"] = "";
+                        @endphp
+
+                        <input hidden value="{{$_GET["redirect"]}}" name="redirect">
                         <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
