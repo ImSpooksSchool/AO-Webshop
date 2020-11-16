@@ -5,11 +5,10 @@
  */
 
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers;
 
 
 use App\Category;
-use App\Http\Controllers\Controller;
 use App\Product;
 use App\ShoppingCart;
 use App\Utils\SpooksUtils;
@@ -81,5 +80,34 @@ class UserController extends Controller {
         $cart->clear();
 
         return redirect("/ordersuccess");
+    }
+
+    public function addToCart(Product $product) {
+        $cart = ShoppingCart::getInstance();
+        $cart->addProduct($product);
+
+        return redirect("/cart");
+    }
+
+    public function setCart(Request $request) {
+        if (!$request->has("id") || !$request->has("newVal"))
+            return ["response" => false,
+                "has_id" => $request->has("id"), "newVal" => $request->has("newVal")];
+
+        $product_id = intval($request->get("id"));
+        $new = intval($request->get("newVal"));
+
+        $product = Product::find($product_id);
+        $cart = ShoppingCart::getInstance();
+
+        if ($new <= 0) {
+            $cart->deleteProduct($product);
+        } else if ($cart->getProducts()[$product->getId()] < $new){
+            $cart->addProduct($product);
+        } else {
+            $cart->removeProduct($product);
+        }
+
+        return ["response" => true];
     }
 }

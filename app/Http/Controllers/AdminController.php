@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Category;
-use App\Http\Controllers\Controller;
+use App\Order;
 use App\Product;
 use App\Utils\Placeholder;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 
-class AdminProductController extends Controller {
+class AdminController extends Controller {
     /**
      * Create a new controller instance.
      *
@@ -20,12 +20,71 @@ class AdminProductController extends Controller {
         $this->middleware('isadmin');
     }
 
+    /*
+     * MAIN STUFF
+     */
 
-    public function create(Category $category) {
+    public function index() {
+        return view("admin.index");
+    }
+
+    public function handleOrder(Order $order) {
+        $order->setHandled(!$order->isHandled());
+        $order->save();
+        return redirect("/admin");
+    }
+
+    /*
+     * CATEGORY STUFF
+     */
+
+    public function createCategory() {
+        return view("admin.category.add");
+    }
+
+    public function storeCategory(Request $request) {
+        $category = new Category();
+        $category->setName($request->get("name"));
+        $category->setLabel($request->get("label"));
+        $category->save();
+
+        return redirect("/admin");
+    }
+
+    public function showCategory(Category $category) {
+        //
+    }
+
+    public function editCategory(Category $category) {
+        return view("admin.category.edit", ["category" => $category]);
+    }
+
+    public function updateCategory(Request $request, Category $category) {
+        $category->setName($request->get("name"));
+        $category->setLabel($request->get("label"));
+        $category->save();
+
+        return redirect("/admin");
+    }
+
+    public function destroyCategory(Category $category) {
+        foreach ($category->getProducts() as $product) {
+            $product->delete();
+        }
+        $category->delete();
+
+        return redirect("/admin");
+    }
+
+    /*
+     * PRODUCT STUFF
+     */
+
+    public function createProduct(Category $category) {
         return view("admin.product.add", ["category" => $category]);
     }
 
-    public function store(Request $request, Category $category) {
+    public function storeProduct(Request $request, Category $category) {
         $product = new Product();
         $product->setCategory($category);
         $product->setName($request->get("name"));
@@ -44,15 +103,15 @@ class AdminProductController extends Controller {
         return redirect("/admin");
     }
 
-    public function show(Product $product) {
+    public function showProduct(Product $product) {
 
     }
 
-    public function edit(Product $product) {
+    public function editProduct(Product $product) {
         return view("admin.product.edit", ["product" => $product]);
     }
 
-    public function update(Request $request, Product $product) {
+    public function updateProduct(Request $request, Product $product) {
         $product->setName($request->get("name"));
         $product->setLabel($request->get("label"));
         $product->setDescription($request->get("description"));
@@ -68,7 +127,7 @@ class AdminProductController extends Controller {
         return redirect("/admin");
     }
 
-    public function destroy(Product $product) {
+    public function destroyProduct(Product $product) {
         try {
             $product->delete();
         } catch (\Exception $e) {
